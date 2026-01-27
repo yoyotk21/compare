@@ -6,6 +6,7 @@ from app.schemas.llm_response import LLMResponse
 from app.schemas.cluster import Cluster
 from app.functions.prompt import extract_prompt
 from app.core.config import get_settings
+import asyncio
 
 async def request(model_name: str, messages: list[dict[str, str]], **kwargs) -> str:
     """Wrapper of OpenRouter chat request. Just returns the response string for now."""
@@ -17,16 +18,19 @@ async def request(model_name: str, messages: list[dict[str, str]], **kwargs) -> 
     }
 
     settings = get_settings()
-    # print("PAYLOAD:", json.dumps(payload))
-    async with httpx.AsyncClient() as client:
+    # print("PAYLOAD:", json.dumps(payload))    
+
+    timeout = httpx.Timeout(connect=10.0, read=120.0, write=10.0, pool=10.0)
+    async with httpx.AsyncClient(timeout=timeout) as client:
         response = await client.post(
             url="https://openrouter.ai/api/v1/chat/completions",
             headers={
                 "Authorization": f"Bearer {settings.openrouter_api_key}",
             },
-            data=json.dumps(payload)
+            json=payload
         )
     # print("JSON:", response.json())
+    print("Recieved response from", model_name)
     if "choices" not in response.json():
         print("ERROR in Reponse:")
         print(response.json())
@@ -81,6 +85,24 @@ async def cluster_outputs(input_question: str, outputs: list[LLMResponse]) -> li
         ))
     return clusters
 
+async def gen_clusters(input_question: str) -> list[Cluster]:
+    settings = get_settings()
+    messages = [
+        {
+            "role": "system",
+            "content": "Answer the user's question to the best of your ability."
+        },
+        {
+            "role": "user",
+            "content": input_question
+        }
+    ]
+    llm_output_requests = [request_and_summarize(model_name, messages, temperature=0, max_tokens=1024) for model_name in settings.models]
+    llm_outputs = await asyncio.gather(*llm_output_requests)
+    clusters = await cluster_outputs(input_question, llm_outputs)
+    return clusters
+
+# testing code
 async def main():
     models = ["openai/gpt-5.2", "openai/gpt-5.1"]
     async def poem_request(model_name):

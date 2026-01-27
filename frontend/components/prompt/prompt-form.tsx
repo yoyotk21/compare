@@ -16,7 +16,7 @@ export default function PromptForm() {
     setPromptText: state.setPromptText,
   }));
   const [localError, setLocalError] = useState<string | null>(null);
-  const { mutateAsync, isPending, isError } = useComparePrompt();
+  const { mutate, isPending, isError } = useComparePrompt();
 
   const wordCount = useMemo(() => countWords(promptText), [promptText]);
 
@@ -34,13 +34,7 @@ export default function PromptForm() {
       return;
     }
 
-    try {
-      await mutateAsync({ text: promptText });
-    } catch (error) {
-      setLocalError(
-        error instanceof Error ? error.message : "Something went wrong. Please try again."
-      );
-    }
+    mutate({ text: promptText });
   };
 
   return (
@@ -60,7 +54,7 @@ export default function PromptForm() {
 
       {localError && <p className="text-sm text-red-400">{localError}</p>}
       {isError && !localError && (
-        <p className="text-sm text-red-400">Couldn’t reach the Compare API. Try again shortly.</p>
+        <p className="text-sm text-red-400">We’re spinning up the models. Hang tight.</p>
       )}
 
       <Button type="submit" className="w-full sm:w-auto" isLoading={isPending}>

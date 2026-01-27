@@ -32,8 +32,8 @@ export default function ResponseCard({ response }: ResponseCardProps) {
       <p className="text-base text-ink font-semibold">{response.response_summary}</p>
       <div
         className={clsx(
-          "mt-3 text-sm leading-relaxed text-ink-muted transition-all",
-          expanded ? "max-h-[1000px] opacity-100" : "max-h-0 overflow-hidden opacity-0"
+          "mt-3 text-sm leading-relaxed text-ink-muted transition-[max-height] duration-500 ease-out",
+          expanded ? "max-h-80 overflow-y-auto pr-1" : "max-h-0 overflow-hidden"
         )}
       >
         <pre className="whitespace-pre-wrap font-body text-sm text-ink/90">{response.response_text}</pre>

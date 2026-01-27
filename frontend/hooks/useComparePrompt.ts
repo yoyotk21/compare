@@ -6,14 +6,28 @@ import { submitComparison } from "@/lib/api";
 import { usePromptStore } from "@/lib/stores/usePromptStore";
 
 export function useComparePrompt() {
-  const setResult = usePromptStore((state) => state.setResult);
+  const { setResult, setIsLoading, setError } = usePromptStore((state) => ({
+    setResult: state.setResult,
+    setIsLoading: state.setIsLoading,
+    setError: state.setError,
+  }));
   const router = useRouter();
 
   return useMutation({
     mutationFn: submitComparison,
+    onMutate: () => {
+      setError(null);
+      setIsLoading(true);
+      setResult(null);
+      router.push("/results");
+    },
     onSuccess: (data) => {
       setResult(data);
-      router.push("/results");
+      setIsLoading(false);
+    },
+    onError: (error) => {
+      setIsLoading(false);
+      setError(error instanceof Error ? error.message : "Something went wrong. Try again.");
     },
   });
 }

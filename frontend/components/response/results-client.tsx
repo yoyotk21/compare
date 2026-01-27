@@ -5,20 +5,50 @@ import { useRouter } from "next/navigation";
 import ClusterCard from "@/components/response/cluster-card";
 import { usePromptStore } from "@/lib/stores/usePromptStore";
 import Button from "@/components/ui/button";
+import LoadingSkeleton from "@/components/response/loading-skeleton";
 
 export default function ResultsClient() {
   const router = useRouter();
-  const { result, promptText } = usePromptStore((state) => ({
+  const { result, promptText, isLoading, error, reset } = usePromptStore((state) => ({
     result: state.result,
     promptText: state.promptText,
+    isLoading: state.isLoading,
+    error: state.error,
+    reset: state.reset,
   }));
 
   useEffect(() => {
-    if (!result) {
+    if (!result && !isLoading && !error) {
       const timeout = setTimeout(() => router.replace("/"), 3000);
       return () => clearTimeout(timeout);
     }
-  }, [result, router]);
+  }, [result, isLoading, error, router]);
+
+  const handleBackHome = () => {
+    reset();
+    router.push("/");
+  };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <p className="text-xs uppercase tracking-[0.4em] text-accent">Running compare</p>
+        <LoadingSkeleton />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="space-y-4">
+        <h1 className="text-3xl font-display text-ink">We hit a snag</h1>
+        <p className="text-ink-muted">{error}</p>
+        <Button onClick={handleBackHome} className="w-full sm:w-auto">
+          Try another prompt
+        </Button>
+      </section>
+    );
+  }
 
   if (!result) {
     return (
@@ -27,7 +57,7 @@ export default function ResultsClient() {
         <p className="text-ink-muted">
           Head back, drop in your prompt, and we’ll fan it out across the model stack for you.
         </p>
-        <Button onClick={() => router.push("/")} className="w-full sm:w-auto">
+        <Button onClick={handleBackHome} className="w-full sm:w-auto">
           Return to prompt
         </Button>
       </section>

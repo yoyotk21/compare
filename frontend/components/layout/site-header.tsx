@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Button from "@/components/ui/button";
+import { usePromptStore } from "@/lib/stores/usePromptStore";
 
 export default function SiteHeader() {
   const pathname = usePathname();
   const onResultsPage = pathname?.startsWith("/results");
+  const resetStore = usePromptStore((state) => state.reset);
 
   return (
     <header className="mb-10 flex flex-wrap items-center justify-between gap-4 text-sm text-ink-muted">
@@ -15,7 +17,9 @@ export default function SiteHeader() {
       </Link>
       {onResultsPage && (
         <Button asChild variant="ghost">
-          <Link href="/">New prompt</Link>
+          <Link href="/" onClick={() => resetStore()}>
+            New prompt
+          </Link>
         </Button>
       )}
     </header>

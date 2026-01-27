@@ -13,4 +13,5 @@ class ComparisonResponse(BaseModel):
     """Resulting clusters of responses"""
     
     clusters: List[Cluster]
+    public_id: str
     
