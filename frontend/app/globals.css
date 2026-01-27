@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  font-family: var(--font-body), system-ui, -apple-system, BlinkMacSystemFont;
+  background-color: #05050b;
+  color: #f8f9fb;
+  min-height: 100vh;
+}
+
+::selection {
+  background: rgba(127, 255, 212, 0.35);
+  color: #05050b;
+}
+
+textarea::placeholder {
+  color: rgba(248, 249, 251, 0.35);
+}
