@@ -3,6 +3,13 @@
 .env.*
 *.env
 
+# --- SQLite / DB ---
+app.db
+*.db
+*.sqlite
+*.sqlite3
+
+
 # --- Node / JS / TS ---
 node_modules/
 npm-debug.log*

@@ -17,5 +17,5 @@ async def compare_items(
     db: AsyncSession = Depends(get_db)
 ) -> ComparisonResponse:
     clusters = await gen_clusters(payload.text)
-    public_id = persist_comparison(db, payload.text, clusters)
-    return ComparisonResponse(clusters=clusters, public_id=public_id)
+    public_id = await persist_comparison(db, payload.text, clusters)
+    return ComparisonResponse(clusters=clusters, public_id=public_id, input_question=payload.text)

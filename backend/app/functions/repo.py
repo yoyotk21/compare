@@ -82,7 +82,7 @@ async def get_comparison(db: AsyncSession, public_id: str) -> Comparison | None:
 async def get_comparison_clusters(
     db: AsyncSession,
     public_id: str,
-) -> List[ClusterSchema]:
+):
     """
     Query the DB for a comparison by public_id and return list[ClusterSchema].
 
@@ -100,7 +100,7 @@ async def get_comparison_clusters(
     if comparison is None:
         raise ValueError(f"Comparison not found for public_id={public_id}")
 
-    return orm_comparison_to_clusters(comparison)
+    return comparison.original_prompt, orm_comparison_to_clusters(comparison)
 
 
 def orm_comparison_to_clusters(comparison: Comparison) -> List[ClusterSchema]:

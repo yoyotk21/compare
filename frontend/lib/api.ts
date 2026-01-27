@@ -1,9 +1,7 @@
 import { ComparisonPayload, ComparisonResponse } from "@/lib/types";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
-
 export async function submitComparison(payload: ComparisonPayload): Promise<ComparisonResponse> {
-  const response = await fetch(`${API_BASE}/api/compare/`, {
+  const response = await fetch("/api/compare", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -13,6 +11,16 @@ export async function submitComparison(payload: ComparisonPayload): Promise<Comp
 
   if (!response.ok) {
     throw new Error("Failed to compare responses");
+  }
+
+  return response.json();
+}
+
+export async function fetchResults(publicId: string): Promise<ComparisonResponse> {
+  const response = await fetch(`/api/results/${publicId}`);
+
+  if (!response.ok) {
+    throw new Error("Comparison not found");
   }
 
   return response.json();

@@ -15,4 +15,6 @@ export interface Cluster {
 
 export interface ComparisonResponse {
   clusters: Cluster[];
+  public_id: string;
+  input_question: string;
 }

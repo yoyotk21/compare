@@ -19,11 +19,11 @@ export function useComparePrompt() {
       setError(null);
       setIsLoading(true);
       setResult(null);
-      router.push("/results");
     },
     onSuccess: (data) => {
       setResult(data);
       setIsLoading(false);
+      router.push(`/results/${data.public_id}`);
     },
     onError: (error) => {
       setIsLoading(false);

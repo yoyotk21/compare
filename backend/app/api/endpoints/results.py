@@ -21,8 +21,8 @@ async def get_results(
     db: AsyncSession = Depends(get_db),
 ) -> ComparisonResponse:
     try:
-        clusters = await get_comparison_clusters(db, public_id)
+        prompt, clusters = await get_comparison_clusters(db, public_id)
     except ValueError:
         raise HTTPException(status_code=404, detail="Comparison not found")
 
-    return ComparisonResponse(clusters=clusters, public_id=public_id)
+    return ComparisonResponse(clusters=clusters, public_id=public_id, input_question=prompt)

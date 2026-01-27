@@ -14,4 +14,5 @@ class ComparisonResponse(BaseModel):
     
     clusters: List[Cluster]
     public_id: str
+    input_question: str
     
