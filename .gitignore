@@ -31,6 +31,7 @@ __pycache__/
 venv/
 ENV/
 env/
+!.env.example
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
