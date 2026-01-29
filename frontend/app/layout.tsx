@@ -15,7 +15,7 @@ const body = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Compare",
+  title: "compare_llm",
   description: "See how top LLMs respond to the same prompt.",
 };
 

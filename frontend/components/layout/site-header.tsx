@@ -13,7 +13,7 @@ export default function SiteHeader() {
   return (
     <header className="mb-10 flex flex-wrap items-center justify-between gap-4 text-sm text-ink-muted">
       <Link href="/" className="text-lg font-display font-semibold uppercase tracking-widest text-accent">
-        Compare
+        compare_llm
       </Link>
       {onResultsPage && (
         <Button asChild variant="ghost">

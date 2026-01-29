@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 
@@ -17,6 +17,7 @@ interface ResultsClientProps {
 
 export default function ResultsClient({ publicId }: ResultsClientProps) {
   const router = useRouter();
+  const [shareUrl, setShareUrl] = useState("");
   const { result, promptText, isLoading, error, reset, setResult, setError, setIsLoading } =
     usePromptStore((state) => ({
       result: state.result,
@@ -54,6 +55,11 @@ export default function ResultsClient({ publicId }: ResultsClientProps) {
       setIsLoading(false);
     }
   }, [fetchError, setError, setIsLoading]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setShareUrl(window.location.href);
+  }, [publicId]);
 
   const activeResult = hasStoreResult ? result : data;
 
@@ -111,9 +117,11 @@ export default function ResultsClient({ publicId }: ResultsClientProps) {
             <p className="mt-2 whitespace-pre-line text-base text-ink">{displayedPrompt}</p>
           </div>
         )}
-        <p className="text-sm text-ink-muted">
-          Shareable link: <span className="text-ink">compare.app/results/{publicId}</span>
-        </p>
+        {shareUrl && (
+          <p className="text-sm text-ink-muted">
+            Shareable link: <span className="text-ink">{shareUrl}</span>
+          </p>
+        )}
       </div>
 
       <div className="space-y-8">

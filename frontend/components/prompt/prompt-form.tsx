@@ -45,7 +45,7 @@ export default function PromptForm() {
           rows={10}
           value={promptText}
           onChange={(event) => setPromptText(event.target.value)}
-          placeholder="Example: Compare how leading models would design a mentor program for junior engineers."
+          placeholder="Example: What’s the healthiest grab-and-go breakfast I can make in 10 minutes?"
         />
         <div className="flex items-center justify-between text-xs text-ink-muted">
           <span>We’ll keep your prompt under wraps and only use it for this run.</span>
@@ -58,10 +58,13 @@ export default function PromptForm() {
         <p className="text-sm text-red-400">We’re spinning up the models. Hang tight.</p>
       )}
 
-      <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
-        <Button type="submit" className="w-full sm:w-auto" isLoading={isPending}>
-          Run across models
-        </Button>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="flex w-full flex-col gap-2 sm:w-auto">
+          <Button type="submit" className="w-full sm:w-auto" isLoading={isPending}>
+            Run across models
+          </Button>
+          <p className="text-xs text-ink-muted">Takes up to a minute.</p>
+        </div>
         {isPending && (
           <div className="flex items-center gap-3">
             <Skeleton className="h-4 w-32 rounded-full" />
