@@ -4,6 +4,7 @@ import { FormEvent, useMemo, useState } from "react";
 import Button from "@/components/ui/button";
 import TextArea from "@/components/ui/textarea";
 import WordCounter from "@/components/ui/word-counter";
+import Skeleton from "@/components/ui/skeleton";
 import { usePromptStore } from "@/lib/stores/usePromptStore";
 import { countWords } from "@/lib/utils/words";
 import { useComparePrompt } from "@/hooks/useComparePrompt";
@@ -57,9 +58,17 @@ export default function PromptForm() {
         <p className="text-sm text-red-400">We’re spinning up the models. Hang tight.</p>
       )}
 
-      <Button type="submit" className="w-full sm:w-auto" isLoading={isPending}>
-        Run across models
-      </Button>
+      <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+        <Button type="submit" className="w-full sm:w-auto" isLoading={isPending}>
+          Run across models
+        </Button>
+        {isPending && (
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-4 w-32 rounded-full" />
+            <Skeleton className="h-4 w-20 rounded-full" />
+          </div>
+        )}
+      </div>
     </form>
   );
 }

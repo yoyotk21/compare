@@ -9,6 +9,7 @@ class Settings(BaseSettings):
 
     openrouter_api_key: str = Field(repr=False)
     database_url: str = Field(repr=False)
+    local_database_url: str = Field(repr=False)
 
     models: list[str] = Field(default_factory=lambda: [
         "openai/gpt-5.2",

@@ -1,36 +1,25 @@
-from sqlalchemy.ext.asyncio import (
-    create_async_engine,
-    async_sessionmaker,
-    AsyncSession,
-)
+import ssl, certifi
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy.orm import DeclarativeBase
 
-from app.core.config import get_settings  # or wherever your Settings lives
-
+from app.core.config import get_settings
 
 class Base(DeclarativeBase):
     pass
 
+settings = get_settings()
 
-def make_engine():
-    settings = get_settings()
-    return create_async_engine(
-        settings.database_url,
-        echo=False,
-        future=True,
-        pool_pre_ping=True,
-    )
+ssl_context = ssl.create_default_context(cafile=certifi.where())
 
-
-engine = make_engine()
-
-SessionLocal = async_sessionmaker(
-    bind=engine,
-    expire_on_commit=False,
-    class_=AsyncSession,
+engine = create_async_engine(
+    settings.database_url,
+    echo=False,
+    pool_pre_ping=True,
+    connect_args={"ssl": False},
 )
 
+SessionLocal = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
-async def get_db() -> AsyncSession:
+async def get_db():
     async with SessionLocal() as session:
         yield session
