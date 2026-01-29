@@ -4,6 +4,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000"
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
+  console.log("compare POST using API_BASE", API_BASE);
   const response = await fetch(`${API_BASE}/api/compare/`, {
     method: "POST",
     headers: {
