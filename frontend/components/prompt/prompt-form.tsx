@@ -1,15 +1,19 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import Button from "@/components/ui/button";
 import TextArea from "@/components/ui/textarea";
 import WordCounter from "@/components/ui/word-counter";
-import Skeleton from "@/components/ui/skeleton";
 import { usePromptStore } from "@/lib/stores/usePromptStore";
 import { countWords } from "@/lib/utils/words";
 import { useComparePrompt } from "@/hooks/useComparePrompt";
 
 const WORD_LIMIT = 500;
+const PROGRESS_STEPS = [
+  "Queuing models",
+  "Summarizing responses",
+  "Clustering overlaps",
+];
 
 export default function PromptForm() {
   const { promptText, setPromptText } = usePromptStore((state) => ({
@@ -17,9 +21,23 @@ export default function PromptForm() {
     setPromptText: state.setPromptText,
   }));
   const [localError, setLocalError] = useState<string | null>(null);
+  const [activeStep, setActiveStep] = useState(0);
   const { mutate, isPending, isError } = useComparePrompt();
 
   const wordCount = useMemo(() => countWords(promptText), [promptText]);
+
+  useEffect(() => {
+    if (!isPending) {
+      setActiveStep(0);
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setActiveStep((prev) => (prev + 1) % PROGRESS_STEPS.length);
+    }, 2500);
+
+    return () => clearInterval(timer);
+  }, [isPending]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -42,13 +60,13 @@ export default function PromptForm() {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-3">
         <TextArea
-          rows={10}
+          rows={14}
           value={promptText}
           onChange={(event) => setPromptText(event.target.value)}
           placeholder="Example: What’s the healthiest grab-and-go breakfast I can make in 10 minutes?"
         />
         <div className="flex items-center justify-between text-xs text-ink-muted">
-          <span>We’ll keep your prompt under wraps and only use it for this run.</span>
+          <span>We’ll keep your prompt under wraps and only use it for this run. Your data might be sold to China.</span>
           <WordCounter current={wordCount} max={WORD_LIMIT} />
         </div>
       </div>
@@ -66,10 +84,22 @@ export default function PromptForm() {
           <p className="text-xs text-ink-muted">Takes up to a minute.</p>
         </div>
         {isPending && (
-          <div className="flex items-center gap-3">
-            <Skeleton className="h-4 w-32 rounded-full" />
-            <Skeleton className="h-4 w-20 rounded-full" />
-          </div>
+          <ol className="space-y-1 text-xs text-ink-muted" aria-live="polite">
+            {PROGRESS_STEPS.map((step, index) => (
+              <li key={step} className="flex items-center gap-2">
+                <span
+                  className={`h-2.5 w-2.5 rounded-full transition-colors ${
+                    index === activeStep
+                      ? "bg-accent shadow-[0_0_8px_rgba(196,255,213,0.6)]"
+                      : index < activeStep
+                        ? "bg-ink"
+                        : "bg-white/30"
+                  }`}
+                />
+                <span className={index === activeStep ? "text-ink" : "text-ink-muted"}>{step}</span>
+              </li>
+            ))}
+          </ol>
         )}
       </div>
     </form>

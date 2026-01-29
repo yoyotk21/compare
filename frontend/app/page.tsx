@@ -5,7 +5,7 @@ export default function HomePage() {
     <section className="space-y-8">
       <div className="space-y-4">
         <h1 className="text-4xl font-display font-semibold leading-tight text-ink">
-          See what the models really think.
+          See what AI thinks.
         </h1>
         <p className="max-w-2xl text-base text-ink-muted">
           Drop in your prompt and we’ll run it through a curated stack of top-tier models, summarize their
